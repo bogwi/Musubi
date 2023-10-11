@@ -2,17 +2,17 @@
 
 ## Description
 
-An implementation of an adjacency map graph where all edges incident to a vertex are gathered into a map, with the adjacent vertex serving as a key. \
-The graph can be initiated as one of the four variants, subjects of graph's type: `.directed,.undirected` and mode: `.weighted, .unweighted`.
+An implementation of an adjacency map graph, where all edges incident on a vertex are collected into a map, using the adjacent vertex as a key. \
+The graph can be initiated as one of four variants, subjects of graph type: `.directed,.undirected` and mode: `.weighted, .unweighted`.
 ```zig
 const Graph = Musubi(VertexId, EdgeId, EdgeWt, .undirected, .unweighted);
 var graph: Graph = .{};
 graph.init(allocator);
 defer graph.deinit();
 ``` 
-`VertexId`, a vertex type, can be anything hash-able, like numeric types, structs, arrays, pieces of code, or anything save floats and untagged enums. \
+`VertexId`, a vertex type, can be anything that can be hashed, such as numeric types, structs, arrays, snippets of code, or anything except floats and untagged enums. \
 `EdgeId`, an edge type, can be anything. \
-`EdgeWt`, type of edge's weight if the graph was initiated as weighted; any numeric type. If the graph is unweighted, the type is void. 
+`EdgeWt`, the weight type of the edge, if the graph was initiated as weighted; any numeric type. If the graph is unweighted, the type is void. 
 
 Here is the full API at the moment:
 
@@ -118,18 +118,18 @@ The graph traversing procedure supports four + 1 algorithm by passing a correspo
 `.dfsC`, depth-first search, pure recursive \
 `.dij` , Dijkstra shortest path, iterative. 
 
-Which algorithm is better? It depends. `.bfs` and `.dij` are both Shortest-Path algorithms. The only difference between them is that `.bfs` gives the shortest path based on how many edges it needs to travel to reach the goal, whereas `.dij` considers edges' weights, treating them akin to distances connecting vertices. If all edges have the same weight, then `.dij` will produce the same result as `.bfsd`. \
-The depth-first search group of algorithms is different and graph-dependent. If the graph is undirected, where all the vertices are connected randomly, they will not necessarily produce the shortest paths from origin to destination. They explore the graph as a whole and are useful in finding the longest paths possible. If we have such an undirected tangly graph of 1M vertices connected at random, and if it is possible to travel from the first vertex to the last vertex and visit all the nodes, the recursive `.dfsC` algorithm will find that path of 1M - 1 vertex. \
-`.dfsB` is the author's iterative algorithm, which emulates true recursion to a great extent. In some scenarios, the paths it produces are identical to true recursion with an identical stack trace, yet in branches, it might differ. It is designed only for undirected graphs as `dfsC` substitute. \
-`.dfsA` is a lazy iterative algorithm often found in books and used worldwide. It is an inversion of `.bfs` where the queue is replaced for the stack. In the case of an undirected randomly connected graph, the paths it produces will be much shorter than those of the recursive `.dfsC`. 
+Which algorithm is better? That depends. `.bfs` and `.dij` are both shortest path algorithms. The only difference between them is that `.bfs` gives the shortest path based on how many edges it needs to travel to reach the goal, while `.dij` considers the weights of the edges, treating them like distances between vertices. If all edges have the same weight, then `.dij` will give the same result as `.bfsd`. \
+The depth-first group of algorithms is different and graph-dependent. If the graph is undirected, where all vertices are randomly connected, they will not necessarily produce the shortest paths from origin to destination. They explore the graph as a whole and are useful for finding the longest possible paths. If we have such an undirected tangly graph with 1M randomly connected vertices, and if it is possible to travel from the first vertex to the last vertex and visit all the nodes, the recursive `.dfsC` algorithm will find this path from 1M - 1 vertex. \
+`.dfsB` is the author's iterative algorithm, which emulates true recursion to a large extent. In some scenarios, the paths it produces are identical to true recursion with an identical stack trace, but may differ in branches. It is only designed for undirected graphs as a `dfsC` replacement. \
+`.dfsA` is a lazy iterative algorithm often found in books and used worldwide. It is an inversion of `.bfs` where the queue is substituted for the stack. In the case of an undirected, randomly connected graph, the paths it produces will be much shorter than those of the recursive `.dfsC`. 
 
-Additional parameters are: \
-`knockout`, a set of vertices that should be removed from traversing, or traversing exclusively through them \
-`target`, the target of traversing, will stop once the target is reached \
-`depth`, the depth of the traversing, which, depending on the algorithm, has slightly different objectives.
+Additional parameters are \
+`knockout`, a set of vertices to remove from the traversal or to traverse only \
+`target`, the target of the traversal, the traversal will stop when the target is reached \
+`depth`, the depth of the traversal, which has slightly different goals depending on the algorithm.
 
-The traversing process computes a connection tree from the given origin vertex to all the other vertices in the map. \
-The connection tree has its own documented API to work with the result:
+The traversal process computes a connection tree from the given starting vertex to all other vertices in the map. \
+The connection tree has its own documented API for working with the result:
 ```
 Connection
     .found:                          bool
@@ -186,7 +186,7 @@ kruskalMST:                           MST
         gotVertexPair:               bool  
 ```
 ## Performance
-The backing ADT of Musubi is Zig's superior ArrayHashMap, which has an unmatched iteration speed over keys and values and can extract keys and values for granted. That speeds up the graph's routine considerably. Calling, say, `vertices()`, you get an array of all vertices in the graph without harvesting them all into a container and only then returning them to the user. Same goes with finding `incidentEdges()` of a vertex or its `adjacentVertices()`.
+Musubi's underlying ADT is Zig's superior ArrayHashMap, which has unmatched iteration speed over keys and values, and can extract keys and values as a matter of course. This speeds up the graph routine considerably. For example, calling `vertices()` will give you an array of all the vertices in the graph without harvesting them all into a container and only then returning them to the user. The same goes for finding `incidentEdges()` of a vertex or its `adjacentVertices()`.
 
 ### Testing 
 Apple M1 laptop with 32GB of RAM, \
@@ -203,7 +203,7 @@ PRE                  time: 3.020
 POST                 time: 3.033
 INO                  time: 3.019
 ```
-Although not as advertised, Musubi remembers the insertion order and thus can be easily used as a general or binary tree for your projects. The only implication is that broken links must be restored manually in case of vertex or edge removal. The graph is not a linked tree and cannot behave as such. Nerveless tree traversing is implemented for directed graphs, and it is pretty fast.
+Although not advertised, Musubi remembers the insertion order and can be used as a general or binary tree for your projects. The only consequence is that broken links have to be repaired manually when vertices or edges are removed. The graph is not a linked tree and cannot behave as such. Nerveless tree traversal is implemented for directed graphs and is quite fast.
 
 #### Undirected, weighted, randomly connected, cobweb-looking graph
 
@@ -233,7 +233,7 @@ throughput: 8.089
 Kruskal:     cost: 29751 time: 0.082, 
 throughput: 6.108
 ```
-(a) Constructing all 25k-1 paths computed by depth-first algorithms happens to be a costly task. As mentioned, dfs algorithms on undirected randomly built graphs tend to produce the longest paths possible, with dfsC as a true recursive algorithm producing the longest paths. Thus, in the further results, *Paths* test will be omitted. However, such graphs are not real-life scenarios but mere benchmarking vessels. It also does not mean that DFS traversing should not be used at all for finding a connection between two points of interest if you work with such a tangled graph.
+(a) Constructing all 25k-1 paths computed by depth-first algorithms happens to be a costly task. As mentioned above, dfs algorithms on undirected randomly constructed graphs tend to produce the longest paths possible, with `.dfsC` as a true recursive algorithm producing the longest paths. Therefore, the *paths* test is omitted in the following results. However, such graphs are not real scenarios, but only benchmarking vessels. It also does not mean that DFS traversing should not be used at all to find a connection between two points of interest when working with such a tangled graph.
 
 ```
 50k vertices: u64 
@@ -261,7 +261,7 @@ throughput: 6.830
 Kruskal:     cost: 59264 time: 0.226 
 throughput: 4.418
 ```
-(a) By an experiment, it was found that recursive dfsC breaks to segmentation fault at around 1_200_000 edges given the graph described above; therefore no data for this algorithm implementation is for larger graphs. For small undirected random graphs < 1.2M edges, using a pure recursive dfsC algorithm should be fine. 
+(a) In an experiment, recursive `.dfsC` was found to break at about 1_200_000 edges for the graph described above, so there is no data for this algorithm implementation for larger graphs. For small undirected random graphs < 1.2M edges, using a purely recursive `.dfsC` algorithm should be fine. 
 
 ```
 100k vertices: u64 
@@ -364,6 +364,6 @@ DIJ Paths                time: 2.739
 
 Topological Sort         time: 20.585
 ```
-In the case of a directed graph, the results are very different. The cost of obtaining every path from the origin to all other vertices is very modest. Since there are no cycles, the recursive .dfsC algorithm inspecting 102M edges works correctly and does not break.
+In the case of a directed graph, the results are very different. The cost of finding every path from the origin to every other vertex is very modest. Since there are no cycles, the recursive `.dfsC` algorithm that examines 102M edges works correctly and does not break.
 
 
