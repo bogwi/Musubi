@@ -1,4 +1,4 @@
-// MIT * bogwi@rakumail.jp 2024 //
+// MIT (c) bogwi@rakumail.jp 2024 //
 
 const std = @import("std");
 const Allocator = std.mem.Allocator;
