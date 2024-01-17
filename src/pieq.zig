@@ -1,4 +1,4 @@
-// MIT (c) bogwi 2023 //
+// MIT (c) bogwi@rakumail.jp 2023 //
 
 const std = @import("std");
 
