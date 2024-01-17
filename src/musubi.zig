@@ -1,4 +1,4 @@
-// Apache 2.0 (c) bogwi 2023 //
+// MIT * bogwi@rakumail.jp 2024 //
 
 const std = @import("std");
 const Allocator = std.mem.Allocator;
