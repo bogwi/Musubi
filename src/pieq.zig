@@ -80,7 +80,7 @@ pub fn PieQ(comptime Key: type, comptime Value: type, comptime orientation: Orie
         fn downheap(self: *Self, j: usize) void {
             var j_ = j;
             while (self.has_left(j_)) {
-                var smallest = if (self.has_right(j_) and compareFn(self.isMin(), self.data.items[right(j_)].key, self.data.items[left(j_)].key))
+                const smallest = if (self.has_right(j_) and compareFn(self.isMin(), self.data.items[right(j_)].key, self.data.items[left(j_)].key))
                     right(j_)
                 else
                     left(j_);
@@ -153,11 +153,11 @@ pub fn PieQ(comptime Key: type, comptime Value: type, comptime orientation: Orie
                 switch (self.count()) {
                     else => {
                         if (compareFn(self.isMin(), self.data.items[1].key, self.data.items[2].key)) {
-                            var item = self.data.swapRemove(1);
+                            const item = self.data.swapRemove(1);
                             self.downheap(1);
                             return item;
                         } else {
-                            var item = self.data.swapRemove(2);
+                            const item = self.data.swapRemove(2);
                             self.downheap(2);
                             return item;
                         }

@@ -1,5 +1,14 @@
 .{
-    .name = "Musubi",
+    .name = .Musubi,
     .version = "1.0.0",
+    .fingerprint = 0x7b23a2be89c5f459,
+    .minimum_zig_version = "0.15.1",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "LICENSE",
+        "README.md",
+    },
     .dependencies = .{},
 }
